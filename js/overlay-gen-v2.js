@@ -566,7 +566,7 @@ function togglePlayoffs(ev) {
 	if ( isChecked ) {
 		scheduleBackground.src = `${backgroundPath}/schedule-playoffs.png`;
 	} else {
-		scheduleBackground.src = `${backgroundPath}/schedule.png`;
+		scheduleBackground.src = `${backgroundPath}/schedules.png`;
 	}
 }
 
