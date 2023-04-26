@@ -3,12 +3,17 @@ document.getElementById('tier-dropdown').addEventListener('change', loadTeams);
 document.getElementById('tier-dropdown2').addEventListener('change', loadTeams);
 document.getElementById('createOverlays').addEventListener('click', generateGraphics);
 document.getElementById('isPlayoffs').addEventListener('click', togglePlayoffs);
+document.getElementById('league-select').addEventListener('change', changeLeague);
 
 /**********************************************************************/
 /**********************************************************************/
 /********************* GLOBAL REFERENCES FOR EASE *********************/
 /**********************************************************************/
 /**********************************************************************/
+// vars to swap between "2s mode" and the default (3s mode)
+let isTwos = false;
+let twosPath = '';
+
 let gameOneTierSelect = document.getElementById('tier-dropdown');
 let gameTwoTierSelect = document.getElementById('tier-dropdown2');
 
@@ -182,8 +187,8 @@ function renderSchedule() {
 		// set logos
 		let blueLogo   = document.getElementById(`${game.gameTime}BlueLogo`);
 		let orangeLogo = document.getElementById(`${game.gameTime}OrangeLogo`);
-		blueLogo.src   = `${logoPath}/${blue.franchise}.png`;
-		orangeLogo.src = `${logoPath}/${orange.franchise}.png`;
+		blueLogo.src   = `${logoPath}${twosPath}/${blue.franchise}.png`;
+		orangeLogo.src = `${logoPath}${twosPath}/${orange.franchise}.png`;
 
 		// WARNING: this has to be done in a setTimeout to prevent a race-condition
 		// where the image hasn't been loaded yet before we try and draw it into 
@@ -391,6 +396,13 @@ function drawLogo(context, element, imgParams) {
 	context.shadowBlur = 20;
 	context.shadowOffsetX = 5;
 	context.shadowOffsetY = 0;
+	// context.drawImage(
+	// 	element,
+	// 	imgParams.dx,
+	// 	imgParams.dy,
+	// 	imgParams.dWidth,
+	// 	imgParams.dWidth
+	// );
 	context.drawImage(
 		element, 
 		imgParams.sx,
@@ -474,9 +486,14 @@ function fetchPlayers(gameData) {
 	let blueTeam   = gameData.blue.team;
 	let orangeTeam = gameData.orange.team;
 
+	let headers = {};
+	if ( isTwos ) {
+		headers = { headers: { League: '2s' } };
+	}
+
 	Promise.all([
-		fetch(`${apiUrl}/players/${blueTeam}`),
-		fetch(`${apiUrl}/players/${orangeTeam}`),
+		fetch(`${apiUrl}/players/${blueTeam}`, headers),
+		fetch(`${apiUrl}/players/${orangeTeam}`, headers),
 	])
 	.then((responses) => Promise.all(responses.map((response) => response.json())))
 	.then((jsonData) => {
@@ -526,7 +543,12 @@ function loadTeams(ev) {
 	let teams = [];
 	let id    = [];
 
-	fetch(`${apiUrl}/teams/${tierSelect}`)
+	let headers = {};
+	if ( isTwos ) {
+		headers = { headers: { League: '2s' } };
+	}
+
+	fetch(`${apiUrl}/teams/${tierSelect}`, headers)
 		.then(response => response.json())
 		.then((data) => {
 			console.log(data);
@@ -564,9 +586,29 @@ function togglePlayoffs(ev) {
 	let isChecked = ev.target.checked;
 
 	if ( isChecked ) {
-		scheduleBackground.src = `${backgroundPath}/schedule-playoffs.png`;
+		scheduleBackground.src = `${backgroundPath}${twosPath}/schedule-playoffs.png`;
 	} else {
-		scheduleBackground.src = `${backgroundPath}/schedules.png`;
+		scheduleBackground.src = `${backgroundPath}${twosPath}/schedules.png`;
+	}
+}
+
+function changeLeague(ev) {
+	let league = ev.target.options[ ev.target.selectedIndex ].value;
+
+	if ( league == '3s' ) {
+		isTwos = false;
+		twosPath = '';
+		scheduleBackground.src = `${backgroundPath}${twosPath}/schedule.png`;
+		gameBackground.src     = `${backgroundPath}${twosPath}/game.png`;
+		lineupBackground.src   = `${backgroundPath}${twosPath}/lineup.png`;
+		matchupBackground.src  = `${backgroundPath}${twosPath}/matchup.png`;
+	} else {
+		isTwos = true;
+		twosPath = '-2s';
+		scheduleBackground.src = `${backgroundPath}${twosPath}/schedule.png`;
+		gameBackground.src     = `${backgroundPath}${twosPath}/game.png`;
+		lineupBackground.src   = `${backgroundPath}${twosPath}/lineup.png`;
+		matchupBackground.src  = `${backgroundPath}${twosPath}/matchup.png`;
 	}
 }
 
