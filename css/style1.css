@@ -3,10 +3,10 @@
 	margin-left: 20px;
 }
 #toggleControls.closed::after {
-	content: ' ➕';
+	content: ' +';
 }
 #toggleControls.open::after {
-	content: ' ➖';
+	content: ' -';
 }
 
 .hidden {
