@@ -43,10 +43,10 @@
 				<option value="Contender">Contender</option>
 				<option value="Amateur">Amateur</option>
 			</select>
-			<select id="blue-team" name="BlueTeam" onchange="">
+			<select class="teamSelect" id="blue-team" name="BlueTeam" onchange="" data-element-id="earlyBlueLogo">
 				<option value="" disabled selected>Blue Team</option>
 			</select>
-			<select id="orange-team" name="OrangeTeam" onchange="">
+			<select class="teamSelect" id="orange-team" name="OrangeTeam" onchange="" data-element-id="earlyOrangeLogo">
 				<option value="" disabled selected>Orange Team</option>
 			</select>
 			<br></br>
@@ -64,25 +64,58 @@
 				<option value="Contender">Contender</option>
 				<option value="Amateur">Amateur</option>
 			</select>
-			<select id="blue-team2" name="BlueTeam2" onchange="">
+			<select class="teamSelect" id="blue-team2" name="BlueTeam2" onchange="" data-element-id="lateBlueLogo">
 				<option value="" disabled selected>Blue Team</option>
 			</select>
-			<select id="orange-team2" name="OrangeTeam2" onchange="">
+			<select class="teamSelect" id="orange-team2" name="OrangeTeam2" onchange="" data-element-id="lateOrangeLogo">
 				<option value="" disabled selected>Orange Team</option>
 			</select>
 			<br></br>
 			<input type="checkbox" name="playoffs" id="isPlayoffs" style="float:left;margin: 10px 10px 0 20px;">
 			<a>isPlayoffs?</a>
 			
-			<br></br>
-			<button id="createOverlays" type="button"
-				style="width: 200px; font-size: 15px; background-color: green; color: white; border: 2px solid green; padding: 3px;margin-top: 5px; margin-left:10px;">CREATE
-				IMAGES</button>
+			<button id="createOverlays" type="button" class="renderImagesButton">CREATE IMAGES</button>
 		</div>
 
 		<div class="main">
 			<h5>Pick Match-Ups On The Left</h5>
 			<h6>If you cannot pick a Tier after 20 seconds please refresh the page</h6>
+
+			<div id="error" class="hidden">
+				<h5>You made a Whoopsie!</h5>
+				<p>You must select information for at least <strong>one game</strong> before we can generate any images.</p>
+			</div>
+
+			<a href="#" id="toggleControls" class="closed">Toggle Advanced Logo Controls</a>
+			<div id="logoControls" class="hidden">
+				<p>
+					These values control the logo placement in the "Schedule" image. Change these if a logo looks bad and needs tweaking.
+				</p>
+				<h6>Early Blue Team</h6>	
+				X: <input type="text" id="dx1" value="1050">
+				Y: <input type="text" id="dy1" value="220">
+				width: <input type="text" id="dwidth1" value="300">
+				height: <input type="text" id="dheight1" value="300">
+				<h6>Early Orange Team</h6>	
+				X: <input type="text" id="dx2" value="1550">
+				Y: <input type="text" id="dy2" value="220">
+				width: <input type="text" id="dwidth2" value="300">
+				height: <input type="text" id="dheight2" value="300">
+				<h6>Late Blue Team</h6>	
+				X: <input type="text" id="dx3" value="1050">
+				Y: <input type="text" id="dy3" value="560">
+				width: <input type="text" id="dwidth3" value="300">
+				height: <input type="text" id="dheight3" value="300">
+				<h6>Late Orange Team</h6>	
+				X: <input type="text" id="dx4" value="1550">
+				Y: <input type="text" id="dy4" value="560">
+				width: <input type="text" id="dwidth4" value="300">
+				height: <input type="text" id="dheight4" value="300">
+				<br><br>	
+				<button id="createOverlays" type="button" class="renderImagesButton">Re-Render Images</a>
+			</div>
+
+
 
 			<div></div>
 			<br></br>

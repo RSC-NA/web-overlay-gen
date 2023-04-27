@@ -1,9 +1,19 @@
 // event handlers
 document.getElementById('tier-dropdown').addEventListener('change', loadTeams);
 document.getElementById('tier-dropdown2').addEventListener('change', loadTeams);
-document.getElementById('createOverlays').addEventListener('click', generateGraphics);
 document.getElementById('isPlayoffs').addEventListener('click', togglePlayoffs);
 document.getElementById('league-select').addEventListener('change', changeLeague);
+document.getElementById('toggleControls').addEventListener('click', togglePanel);
+
+// render images buttons. this is done by class now as we have more than one
+Array.from(document.getElementsByClassName('renderImagesButton')).forEach((el) => {
+	el.addEventListener('click', generateGraphics);
+});
+
+// event handler to load images when team is selected
+Array.from(document.getElementsByClassName('teamSelect')).forEach((el) => {
+	el.addEventListener('change', lazyLoadLogos);
+});
 
 /**********************************************************************/
 /**********************************************************************/
@@ -67,6 +77,8 @@ let renderAttempts  = 0;
 //			2. generates the canvas overlays
 //			3. refill your diet coke!
 function generateGraphics() {
+	document.getElementById('error').classList.add('hidden');
+
 	// clear our gamesData object in case it was previously used
 	gamesData = {};
 
@@ -87,6 +99,7 @@ function generateGraphics() {
 
 	console.log(`Games to render: ${games}`);
 	if ( games == 0 ) {
+		document.getElementById('error').classList.remove('hidden');
 		return console.error("You must select at least one game to render.");
 	}
 
@@ -146,13 +159,13 @@ function renderSchedule() {
 		},
 	};
 
-	let scheduleCtx = scheduleCanvas.getContext('2d');
-	scheduleCtx.drawImage(scheduleBackground, 0, 0, 1920, 1080);
-	scheduleCtx.textAlign = 'left';
+	let ctx = scheduleCanvas.getContext('2d');
+	ctx.drawImage(scheduleBackground, 0, 0, 1920, 1080);
+	ctx.textAlign = 'left';
 
 	// add vs. text
-	scheduleCtx.fillText('vs', 685, 441); // early
-	scheduleCtx.fillText('vs', 685, 783); // late
+	ctx.fillText('vs', 685, 441); // early
+	ctx.fillText('vs', 685, 783); // late
 
 	// load team logos
 	for ( let gameTime in gamesData ) {
@@ -165,37 +178,71 @@ function renderSchedule() {
 		
 		// add tier text with special styling
 		if ( game.gameTime == 'early' ) {
-			scheduleCtx.font = 'bold 35px Verdana';
-			scheduleCtx.fillStyle = '#ffdb00';
-			scheduleCtx.fillText(tiers['early'], 685, 268);
+			ctx.font = 'bold 35px Verdana';
+			ctx.fillStyle = '#ffdb00';
+			ctx.fillText(tiers['early'], 685, 268);
 		} else {
-			scheduleCtx.font = 'bold 35px Verdana';
-			scheduleCtx.fillStyle = '#ffdb00';
-			scheduleCtx.fillText(tiers['late'],  685, 607);
+			ctx.font = 'bold 35px Verdana';
+			ctx.fillStyle = '#ffdb00';
+			ctx.fillText(tiers['late'],  685, 607);
 		}
 
 		// default styling	
-		scheduleCtx.font = '35px Verdana';
-		scheduleCtx.fillStyle = '#f0f0f0';
+		ctx.font = '35px Verdana';
+		ctx.fillStyle = '#f0f0f0';
 
 		// add team names	
 		let bluePos   = namePositions[ gameTime ].blue;
 		let orangePos = namePositions[ gameTime ].orange;
-		scheduleCtx.fillText(blue.team, bluePos.x, bluePos.y);	
-		scheduleCtx.fillText(orange.team, orangePos.x, orangePos.y);	
+		ctx.fillText(blue.team, bluePos.x, bluePos.y);	
+		ctx.fillText(orange.team, orangePos.x, orangePos.y);	
 
 		// set logos
 		let blueLogo   = document.getElementById(`${game.gameTime}BlueLogo`);
 		let orangeLogo = document.getElementById(`${game.gameTime}OrangeLogo`);
-		blueLogo.src   = `${logoPath}${twosPath}/${blue.franchise}.png`;
-		orangeLogo.src = `${logoPath}${twosPath}/${orange.franchise}.png`;
+		// Intentionally removed. Logo loading is now handled dynamically
+		// by lazyLoadLogos() event handler
+		// blueLogo.src   = `${logoPath}${twosPath}/${blue.franchise}.png`;
+		// orangeLogo.src = `${logoPath}${twosPath}/${orange.franchise}.png`;
 
 		// WARNING: this has to be done in a setTimeout to prevent a race-condition
 		// where the image hasn't been loaded yet before we try and draw it into 
 		// the canvas
+		/* WARNING WARNING WARNING. YOU MUST WAIT FOR THE IMAGES TO LOAD */
+		/*
+		let logoPositions = {
+		early: {
+			blue:   { sx: 0, sy: 29, sWidth: 212, sHeight: 156, dx: 1030, dy: 214, dWidth: 426, dHeight: 308 },
+			orange: { sx: 0, sy: 29, sWidth: 212, sHeight: 156, dx: 1495, dy: 214, dWidth: 426, dHeight: 308 },
+		},
+		late: {
+			blue:   { sx: 0, sy: 29, sWidth: 212, sHeight: 156, dx: 1030, dy: 561, dWidth: 426, dHeight: 308 },
+			orange: { sx: 0, sy: 29, sWidth: 212, sHeight: 156, dx: 1495, dy: 561, dWidth: 426, dHeight: 308 },
+		},
+	};
+		*/
+		if ( gameTime == 'early' ) {
+			logoPositions[ gameTime ].blue.dx = document.getElementById('dx1').value;
+			logoPositions[ gameTime ].blue.dy = document.getElementById('dy1').value;
+			logoPositions[ gameTime ].blue.dWidth = document.getElementById('dwidth1').value;
+			logoPositions[ gameTime ].blue.dHeight = document.getElementById('dheight1').value;
+			logoPositions[ gameTime ].orange.dx = document.getElementById('dx2').value;
+			logoPositions[ gameTime ].orange.dy = document.getElementById('dy2').value;
+			logoPositions[ gameTime ].orange.dWidth = document.getElementById('dwidth2').value;
+			logoPositions[ gameTime ].orange.dHeight = document.getElementById('dheight2').value;
+		} else {
+			logoPositions[ gameTime ].blue.dx = document.getElementById('dx3').value;
+			logoPositions[ gameTime ].blue.dy = document.getElementById('dy3').value;
+			logoPositions[ gameTime ].blue.dWidth = document.getElementById('dwidth3').value;
+			logoPositions[ gameTime ].blue.dHeight = document.getElementById('dheight3').value;
+			logoPositions[ gameTime ].orange.dx = document.getElementById('dx4').value;
+			logoPositions[ gameTime ].orange.dy = document.getElementById('dy4').value;
+			logoPositions[ gameTime ].orange.dWidth = document.getElementById('dwidth4').value;
+			logoPositions[ gameTime ].orange.dHeight = document.getElementById('dheight4').value;
+		}
 		setTimeout(() => {	
-			drawLogo(scheduleCtx, blueLogo, logoPositions[ gameTime ].blue);
-			drawLogo(scheduleCtx, orangeLogo, logoPositions[ gameTime ].orange);
+			drawLogo(ctx, blueLogo, logoPositions[ gameTime ].blue);
+			drawLogo(ctx, orangeLogo, logoPositions[ gameTime ].orange);
 		}, 100);
 	}
 }
@@ -381,7 +428,7 @@ function renderMatchups() {
 
 		/* WARNING WARNING WARNING. YOU MUST WAIT FOR THE IMAGES TO LOAD */
 		setTimeout(() => {
-			ctx.drawImage(blueLogo, 135, 250, 276, 276);
+			ctx.drawImage(blueLogo, 135, 350, 276, 276);
 			ctx.drawImage(orangeLogo, 1510, 350, 276, 276);
 		}, 100);
 	}	
@@ -396,24 +443,25 @@ function drawLogo(context, element, imgParams) {
 	context.shadowBlur = 20;
 	context.shadowOffsetX = 5;
 	context.shadowOffsetY = 0;
-	// context.drawImage(
-	// 	element,
-	// 	imgParams.dx,
-	// 	imgParams.dy,
-	// 	imgParams.dWidth,
-	// 	imgParams.dWidth
-	// );
+
 	context.drawImage(
-		element, 
-		imgParams.sx,
-		imgParams.sy,
-		imgParams.sWidth,
-		imgParams.sHeight,
+		element,
 		imgParams.dx,
 		imgParams.dy,
 		imgParams.dWidth,
 		imgParams.dHeight
 	);
+	// context.drawImage(
+	// 	element, 
+	// 	imgParams.sx,
+	// 	imgParams.sy,
+	// 	imgParams.sWidth,
+	// 	imgParams.sHeight,
+	// 	imgParams.dx,
+	// 	imgParams.dy,
+	// 	imgParams.dWidth,
+	// 	imgParams.dHeight
+	// );
 	return true;
 }
 
@@ -551,7 +599,7 @@ function loadTeams(ev) {
 	fetch(`${apiUrl}/teams/${tierSelect}`, headers)
 		.then(response => response.json())
 		.then((data) => {
-			console.log(data);
+			//console.log(data);
 			let teamArray = [];
 
 			// reset the existing dropdowns
@@ -582,6 +630,10 @@ function loadTeams(ev) {
 		});
 }
 
+// togglePlayoffs(changeevent) => null
+// 		event handler for the isPlayoffs checkbox
+//			1. get the current value (checked = use playoffs background, unchecked = use normal)
+//			2. Change the schedule background image	
 function togglePlayoffs(ev) {
 	let isChecked = ev.target.checked;
 
@@ -592,6 +644,30 @@ function togglePlayoffs(ev) {
 	}
 }
 
+// togglePanel(Event clickEvent) => null
+// 		event handler for the logo advanced controls panel (open/close) 
+//			1. get the current status (open|closed) 
+//			2. switch to the opposite version
+//			3. toggle "hidden" class on control div
+function togglePanel(ev) {
+	let linkEl = ev.target;
+	let panelEl = document.getElementById('logoControls');
+	if ( linkEl.classList.contains('open') ) {
+		linkEl.classList.remove('open');
+		linkEl.classList.add('closed');
+		panelEl.classList.add('hidden');
+	} else {
+		linkEl.classList.remove('closed');
+		linkEl.classList.add('open');
+		panelEl.classList.remove('hidden');
+	}
+}
+
+// changeLeague(Event changeEvent) => null
+// 		event handler for the League select 
+//			1. get the current value (3s|2s)
+//			2. If 3s, use 3s background images and set the isTwos bool to false
+//			3. If 2s, use 2s background images, set bool to true, create extra path string for assets	
 function changeLeague(ev) {
 	let league = ev.target.options[ ev.target.selectedIndex ].value;
 
@@ -610,6 +686,72 @@ function changeLeague(ev) {
 		lineupBackground.src   = `${backgroundPath}${twosPath}/lineup.png`;
 		matchupBackground.src  = `${backgroundPath}${twosPath}/matchup.png`;
 	}
+
+	loadTiers(league);
+}
+
+// loadTiers() => null
+//		Loads $apiUrl/tiers
+//			1. Take the current league selection and query the API for the current tiers
+//			2. Update both tier selection elements with the correct list of active tiers
+function loadTiers() {
+	let headers = {};
+	if ( isTwos ) {
+		headers = { headers: { League: '2s' } };
+	}
+
+	// TODO(erh): The streamAPI currently doesn't have a /tiers endpoint for 2s league
+	// waiting for PR
+	let twosTiers = [
+		{ name: 'Premier' },
+		{ name: 'Elite' },
+		{ name: 'Veteran' },
+		{ name: 'Rival' },
+		{ name: 'Challenger' },
+		{ name: 'Prospect' },
+		{ name: 'Contender' },
+	];
+
+	if ( isTwos ) {
+		renderTiers(twosTiers);
+	} else {
+		fetch(`${apiUrl}/tiers`, headers)
+			.then(response => response.json())
+			.then((data) => {
+				renderTiers(data);
+			});
+	}
+}
+
+// renderTiers(array of tierName objects) => null
+function renderTiers(tierList) {
+	let earlyTierDropdown = document.getElementById('tier-dropdown');
+	let lateTierDropdown  = document.getElementById('tier-dropdown2');
+
+	// clear the current options
+	earlyTierDropdown.length  = 1;
+	lateTierDropdown.length = 1;
+
+	for ( let i = 0; i < tierList.length; i++ ) {
+		let earlyTierOption = document.createElement('option');
+		earlyTierOption.text  = tierList[i].name.toString();
+		earlyTierOption.value = tierList[i].name.toString();
+		let lateTierOption = earlyTierOption.cloneNode(true);
+		earlyTierDropdown.add(earlyTierOption);
+		lateTierDropdown.add(lateTierOption);
+	}
+}
+
+// lazyLoadLogos(Event changeEvent) => null
+// 		event handler to preload image assets into an <img> element when a team is selected 
+//			1. get the current value of the team checkbox
+//			2. get the data-elementId field to know which image element to update
+//			3. profit! hopefully no more asset loading race conditions
+function lazyLoadLogos(ev) {
+	let logoImageEl = document.getElementById(ev.target.dataset.elementId);
+	let franchiseName = ev.target.value;
+
+	logoImageEl.src = `${logoPath}${twosPath}/${franchiseName}.png`;
 }
 
 /**********************************************************************/
