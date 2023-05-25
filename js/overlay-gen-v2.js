@@ -377,7 +377,7 @@ function renderMatchups() {
 		let barGA     = (((blueStats.oppGoals / (blueStats.oppGoals + orangeStats.oppGoals)) * 100) * 599) / 100;
 		let barSaves  = (((blueStats.saves / (blueStats.saves + orangeStats.saves)) * 100) * 599) / 100;
 		let barSA     = (((blueStats.oppSaves / (blueStats.oppSaves + orangeStats.oppSaves)) * 100) * 599) / 100;
-		let barSP     = (((blueStats.shotPct / (blueStats.shotPct + orangeStats.shotPct)) * 100) * 599) / 100;
+		let barSP     = (((parseFloat(blueStats.shotPct) / (parseFloat(blueStats.shotPct) + parseFloat(orangeStats.shotPct))) * 100) * 599) / 100;
 
 		// draw the bars
 		ctx.fillStyle = '#4ca9f6';
