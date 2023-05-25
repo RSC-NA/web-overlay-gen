@@ -311,9 +311,9 @@ function renderLineups() {
 			ctx.textAlign = 'center';
 			ctx.fillText(player.gp, 820, 326 + (i * 72));
 			ctx.fillText(player.goals, 1050, 326 + (i * 72));
-			ctx.fillText(player.assists, 1233, 326 + (i * 72));
-			ctx.fillText(player.shots, 1422, 326 + (i * 72));
-			ctx.fillText(player.shotPct.toFixed(2) + '%', 1633, 326 + (i * 72));
+			ctx.fillText(parseInt(player.assists), 1233, 326 + (i * 72));
+			ctx.fillText(parseInt(player.shots), 1422, 326 + (i * 72));
+			ctx.fillText(parseFloat(player.shotPct).toFixed(2) + '%', 1633, 326 + (i * 72));
 		}
 
 		for ( let i = 0; i < orangePlayers.length; i++ ) {
@@ -331,7 +331,7 @@ function renderLineups() {
 			ctx.fillText(player.goals, 1050, 781 + (i * 72));
 			ctx.fillText(player.assists, 1233, 781 + (i * 72));
 			ctx.fillText(player.shots, 1422, 781 + (i * 72));
-			ctx.fillText(player.shotPct.toFixed(2) + '%', 1633, 781 + (i * 72));
+			ctx.fillText(parseFloat(player.shotPct).toFixed(2) + '%', 1633, 781 + (i * 72));
 		}
 
 		// add logos
@@ -400,7 +400,7 @@ function renderMatchups() {
 		ctx.fillText(blueStats.oppGoals, 630, 637);
 		ctx.fillText(blueStats.saves,    630, 757);
 		ctx.fillText(blueStats.oppSaves, 630, 878);
-		ctx.fillText(blueStats.shotPct.toFixed(1) + '%', 630, 1000);
+		ctx.fillText(parseFloat(blueStats.shotPct).toFixed(1) + '%', 630, 1000);
 
 		// orange stats
 		ctx.textAlign = 'left';
@@ -410,7 +410,7 @@ function renderMatchups() {
 		ctx.fillText(orangeStats.oppGoals, 1285, 637);
 		ctx.fillText(orangeStats.saves,    1285, 757);
 		ctx.fillText(orangeStats.oppSaves, 1285, 878);
-		ctx.fillText(orangeStats.shotPct.toFixed(1) + '%', 1285, 1000);
+		ctx.fillText(parseFloat(orangeStats.shotPct).toFixed(1) + '%', 1285, 1000);
 
 		ctx.font = 'italic 35px Verdana';
 		ctx.textAlign = 'center';
@@ -548,8 +548,8 @@ function fetchPlayers(gameData) {
 	.then((jsonData) => {
 		// sort players by PPG (change this function if we want different sorting)
 		// original was "goals"
-		jsonData[0].sort((a, b) => b.ppg - a.ppg);
-		jsonData[1].sort((a, b) => b.ppg - a.ppg);
+		jsonData[0].sort((a, b) => parseFloat(b.ppg) - parseFloat(a.ppg));
+		jsonData[1].sort((a, b) => parseFloat(b.ppg) - parseFloat(a.ppg));
 		gameData.blue.players   = jsonData[0];
 		gameData.orange.players = jsonData[1];
 
