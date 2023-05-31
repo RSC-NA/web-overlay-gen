@@ -28,7 +28,7 @@ let gameOneTierSelect = document.getElementById('tier-dropdown');
 let gameTwoTierSelect = document.getElementById('tier-dropdown2');
 
 //const apiUrl = 'https://api.rscstream.com';
-const apiUrl = 'https://rsc-devleague.herokuapp.com';
+const apiUrl = 'https://devleague.rscstream.com';
 const logoPath = './assets/logos/Active Logos';
 const backgroundPath = './images';
 
