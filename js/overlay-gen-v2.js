@@ -714,7 +714,11 @@ function loadTiers() {
 	];
 
 	if ( isTwos ) {
-		renderTiers(twosTiers);
+		fetch(`${apiUrl}/tiers`, headers)
+			.then(response => response.json())
+			.then((data) => {
+				renderTiers(data);
+			});
 	} else {
 		fetch(`${apiUrl}/tiers`, headers)
 			.then(response => response.json())
