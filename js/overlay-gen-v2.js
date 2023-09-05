@@ -701,31 +701,11 @@ function loadTiers() {
 		headers = { headers: { League: '2s' } };
 	}
 
-	// TODO(erh): The streamAPI currently doesn't have a /tiers endpoint for 2s league
-	// waiting for PR
-	let twosTiers = [
-		{ name: 'Premier' },
-		{ name: 'Elite' },
-		{ name: 'Veteran' },
-		{ name: 'Rival' },
-		{ name: 'Challenger' },
-		{ name: 'Prospect' },
-		{ name: 'Contender' },
-	];
-
-	if ( isTwos ) {
-		fetch(`${apiUrl}/tiers`, headers)
-			.then(response => response.json())
-			.then((data) => {
-				renderTiers(data);
-			});
-	} else {
-		fetch(`${apiUrl}/tiers`, headers)
-			.then(response => response.json())
-			.then((data) => {
-				renderTiers(data);
-			});
-	}
+	fetch(`${apiUrl}/tiers`, headers)
+		.then(response => response.json())
+		.then((data) => {
+			renderTiers(data);
+		});
 }
 
 // renderTiers(array of tierName objects) => null
