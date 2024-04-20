@@ -41,6 +41,7 @@ const earlyBlueLogo      = document.getElementById('earlyBlueLogo');
 const earlyOrangeLogo    = document.getElementById('earlyOrangeLogo');
 const lateBlueLogo       = document.getElementById('lateBlueLogo');
 const lateOrangeLogo     = document.getElementById('lateOrangeLogo');
+const mediaOverlay       = document.getElementById('mediaOverlay');
 
 // refs to canvases
 const scheduleCanvas = document.getElementById('scheduleCanvas');
@@ -49,6 +50,7 @@ const scheduleCanvas = document.getElementById('scheduleCanvas');
 const earlyGameCanvas    = document.getElementById('earlyGameCanvas');
 const earlyLineupCanvas  = document.getElementById('earlyLineupCanvas');
 const earlyMatchupCanvas = document.getElementById('earlyMatchupCanvas');
+const productionCanvas   = document.getElementById('productionCanvas');
 
 // late game
 const lateGameCanvas    = document.getElementById('lateGameCanvas');
@@ -127,8 +129,48 @@ function renderImages() {
 	renderGames();
 	renderLineups();
 	renderMatchups();
+	renderProduction();
 }
 
+let hasRun = 0;
+
+function renderProduction() {
+
+	// production crew data 
+	const textWords = {
+		 casters:  document.getElementById('casters').value,
+		 producer: document.getElementById('producer').value,
+	};
+
+	console.log(textWords);
+
+	let textPositions = {
+		casters:  { x: 465, y: 40 },
+		producer: { x: 1450, y: 40 },
+	};
+
+	let ctx = productionCanvas.getContext('2d');
+	ctx.drawImage(mediaOverlay, 0, 0, 1920, 1080);
+	ctx.textAlign = 'center';
+
+	// load team logos
+	for ( let group in textPositions ) {
+		const word = textWords[group].toUpperCase();	
+		const pos  = textPositions[group];
+
+		console.log('PRODUCTION!!!', word, pos);
+	
+		ctx.font = 'bold 35px "CooperHewitt"';
+		ctx.fillStyle = '#f0f0f0';
+		
+		// add team names	
+		ctx.fillText(word, pos.x, pos.y);	
+	}
+	if (hasRun === 0 ) {
+		setTimeout(renderProduction, 1000);
+	}
+	hasRun = 1;
+}
 // renderSchedule() -> null
 //		renderSchedule() builds and renders the schedule image
 function renderSchedule() {

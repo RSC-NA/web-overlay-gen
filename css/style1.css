@@ -1,3 +1,11 @@
+@font-face {
+	font-family: "CooperHewitt";
+	src: url("../fonts/CooperHewitt-BoldItalic.eot");
+	src: url("../fonts/CooperHewitt-BoldItalic.woff") format("woff"),
+	url("../fonts/CooperHewitt-BoldItalic.otf") format("opentype"),
+	url("../fonts/CooperHewitt-BoldItalic.svg#filename") format("svg");
+}
+
 /* styles for the advanced positioning control panel link */
 #toggleControls {
 	margin-left: 20px;
@@ -208,6 +216,13 @@ padding-left: 20px;
 #scheduleCanvas { 
 	width:480px; 
 	height:270px;
+}
+
+#productionCanvas { 
+	width: 480px;
+	height: 270px;
+	width: 960px;
+	height: 530px;
 }
 
 .sidenav {

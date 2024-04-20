@@ -5,7 +5,7 @@
 		<title>RSC Overlay Generator</title>
 		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-transform/1.0.4/d3-transform.min.js"
-			integrity="sha512-mxtQ5axoakkabgk9lnYJsaCL+BryRmZ4py80vqOf8UIbZhwc+m1bqmnge6Khd7sOLh2gPFCaKiynJEnqR79CaA=="
+integrity="sha512-mxtQ5axoakkabgk9lnYJsaCL+BryRmZ4py80vqOf8UIbZhwc+m1bqmnge6Khd7sOLh2gPFCaKiynJEnqR79CaA=="
 			crossorigin="anonymous"></script>
 
 
@@ -17,7 +17,6 @@
 		<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 		<script defer src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
 		<script defer src="./js/overlay-gen-v2.js?cache=1234567"></script>
-		<!-- <script defer src="./js/controlLogic.js"></script> -->
 	</head>
 
 	<body>
@@ -73,6 +72,26 @@
 			<br></br>
 			<input type="checkbox" name="playoffs" id="isPlayoffs" style="float:left;margin: 10px 10px 0 20px;">
 			<a>isPlayoffs?</a>
+			<a>Casters</a>
+			<input
+				type="textbox"
+				name="casters"
+				id="casters"
+				style="float:left;margin: 10px 10px 0 20px;"
+				placeholder="Casters - Name & Name"
+				value=""
+			>
+			<br><br>
+			<a>Producer</a>
+			<input
+				type="textbox"
+				name="producer"
+				id="producer"
+				style="float:left;margin: 10px 10px 0 20px;"
+				placeholder="Producer - Name"
+				value=""
+			>
+
 			
 			<button id="createOverlays" type="button" class="renderImagesButton">CREATE IMAGES</button>
 		</div>
@@ -148,6 +167,11 @@
 				</div>
 			</div>
 
+			<div style="padding-left: 260px;">
+				<canvas id="productionCanvas" width="1920" height="1080">
+				</canvas>
+			</div>
+
 			<img id="scheduleBackground" width="0" height="0" src="./images/schedule.png">
 			<img id="gameBackground"     width="0" height="0" src="./images/game.png">
 			<img id="matchupBackground"  width="0" height="0" src="./images/matchup.png">
@@ -156,6 +180,7 @@
 			<img id="earlyOrangeLogo"    width="0" height="0" src="./assets/logos/Active Logos/The Sovereign.png">
 			<img id="lateBlueLogo"       width="0" height="0" src="./assets/logos/Active Logos/The Sovereign.png">
 			<img id="lateOrangeLogo"     width="0" height="0" src="./assets/logos/Active Logos/The Sovereign.png">
+			<img id="mediaOverlay"       width="0" height="0" src="./images/media-overlay.png">
 
 			<!-- <br> -->
 			<div style="position: relative; display: flex; justify-content: center; align-items: center;"></div>
