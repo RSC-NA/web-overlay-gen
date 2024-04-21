@@ -207,8 +207,16 @@ padding-left: 20px;
 	width:480px; 
 	height:270px;
 }
+#earlyGameCanvasSmall { 
+	width:480px; 
+	height:270px;
+}
 
 #lateGameCanvas { 
+	width:480px; 
+	height:270px;
+}
+#lateGameCanvasSmall { 
 	width:480px; 
 	height:270px;
 }

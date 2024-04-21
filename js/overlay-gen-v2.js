@@ -48,12 +48,14 @@ const scheduleCanvas = document.getElementById('scheduleCanvas');
 
 // early game
 const earlyGameCanvas    = document.getElementById('earlyGameCanvas');
+const earlyGameCanvasSm  = document.getElementById('earlyGameCanvasSmall');
 const earlyLineupCanvas  = document.getElementById('earlyLineupCanvas');
 const earlyMatchupCanvas = document.getElementById('earlyMatchupCanvas');
 const productionCanvas   = document.getElementById('productionCanvas');
 
 // late game
 const lateGameCanvas    = document.getElementById('lateGameCanvas');
+const lateGameCanvasSm  = document.getElementById('lateGameCanvasSm');
 const lateLineupCanvas  = document.getElementById('lateLineupCanvas');
 const lateMatchupCanvas = document.getElementById('lateMatchupCanvas');
 
@@ -127,6 +129,7 @@ function generateGraphics() {
 function renderImages() {
 	renderSchedule();
 	renderGames();
+	renderThumbnails();
 	renderLineups();
 	renderMatchups();
 	renderProduction();
@@ -287,6 +290,50 @@ function renderSchedule() {
 			drawLogo(ctx, blueLogo, logoPositions[ gameTime ].blue);
 			drawLogo(ctx, orangeLogo, logoPositions[ gameTime ].orange);
 		}, 100);
+	}
+}
+
+// renderThumbnails() -> null
+//		renderThumbnails() builds and renders the game images designed for 
+//		thumbnail use on Twitch VODS -> 1280x720 max size
+function renderThumbnails() {
+	for ( let gameTime in gamesData ) {
+		let ctx = document.getElementById(`${gameTime}GameCanvasSmall`).getContext('2d');
+		let blueLogo = document.getElementById(`${gameTime}BlueLogo`);
+		let orangeLogo = document.getElementById(`${gameTime}OrangeLogo`);
+
+		// draw background
+		//ctx.drawImage(gameBackground, 0, 0, 1920, 1080);
+		ctx.drawImage(gameBackground, 0, 0, 1280, 720);
+		ctx.font = '60px Verdana';
+		ctx.fillStyle = '#f5f5f5';
+		ctx.textAlign = 'center';
+		ctx.shadowColor = 'black';
+		ctx.shadowBlur = 20;
+		ctx.shadowOffsetX = 5;
+		ctx.shadowOffsetY = 5;
+		ctx.fillText( gamesData[ gameTime ].tier, 640, 600);
+
+		// draw logos
+		ctx.font = 'italic 24px Verdana';
+		ctx.textAlign = 'right';
+		setTimeout(() => {
+			ctx.drawImage(blueLogo, 88, 240, 300, 300);
+			ctx.drawImage(orangeLogo, 902, 240, 300, 300);
+		}, 100);
+
+		// draw team names
+		ctx.textAlign = 'center';
+		ctx.font = 'italic bold 64px Verdana';
+		if ( gamesData[gameTime].blue.team.length > 12 ) {
+			ctx.font = 'italic bold 38px Verdana';
+		}
+		ctx.fillText(gamesData[ gameTime ].blue.team, 238, 680);
+		ctx.font = 'italic bold 64px Verdana';
+		if ( gamesData[gameTime].orange.team.length > 12 ) {
+			ctx.font = 'italic bold 38px Verdana';
+		}
+		ctx.fillText(gamesData[ gameTime ].orange.team, 1052, 680);
 	}
 }
 
